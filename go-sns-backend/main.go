@@ -19,6 +19,7 @@ func main() {
 
 	// 認証関連のエンドポイント
 	e.POST("/signup", handlers.Signup)
+	e.POST("/login", handlers.Login)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
