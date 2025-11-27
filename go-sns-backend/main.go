@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-snsbackend/db"
+	"go-snsbackend/handlers"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,6 +16,9 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})
+
+	// 認証関連のエンドポイント
+	e.POST("/signup", handlers.Signup)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
