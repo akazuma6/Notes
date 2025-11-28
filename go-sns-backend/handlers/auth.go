@@ -56,7 +56,7 @@ func Login(c echo.Context) error {
 
 	// パスワード照合
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return c.JSON(http.StatusUnauthorized, "Could not generate token")
+		return c.JSON(http.StatusUnauthorized, "mismatch password")
 	}
 
 	//JWTトークンを生成
