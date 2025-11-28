@@ -33,8 +33,9 @@ func Seed() {
 			log.Printf("初期ユーザー '%s' を作成しました", adminUser.Username)
 
 			// 初期ノートを追加
+			adminUserID := adminUser.ID
 			note1 := models.Note{
-				UserID:  adminUser.ID,
+				UserID:  &adminUserID, // *uint型なのでポインタを渡す
 				Content: "これは初期ノートです。",
 			}
 			if err := DB.Create(&note1).Error; err != nil {

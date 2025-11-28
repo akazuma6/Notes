@@ -3,9 +3,7 @@ package main
 import (
 	"go-snsbackend/db"
 	"go-snsbackend/handlers"
-	"os"
 
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -28,11 +26,11 @@ func main() {
 	r := e.Group("/notes")
 
 	// jwtmiddlewareの設定
-	config := echojwt.Config{
-		SigningKey: []byte(os.Getenv("JWT_SECRET")),
-	}
+	// config := echojwt.Config{
+	// 	SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	// }
 	// /notesのルートはようログインにする
-	r.Use(echojwt.WithConfig(config))
+	// r.Use(echojwt.WithConfig(config))
 
 	r.POST("", handlers.CreateNote)
 	r.GET("", handlers.GetNotes)

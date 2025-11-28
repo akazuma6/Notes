@@ -3,6 +3,7 @@ package handlers
 import (
 	"go-snsbackend/db"
 	"go-snsbackend/models"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -29,7 +30,7 @@ func Signup(c echo.Context) error {
 	// fmt.Printf("DEBUG: ハッシュ化されたパスワード: %s\n", string(hashed))
 	// fmt.Printf("DEBUG: ハッシュの長さ: %d\n", len(hashed))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Could not hash password")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not hash password"})
 	}
 	// ハッシュ化したパスワードを再セット
 	user.Password = string(hashed)
@@ -51,13 +52,17 @@ func Login(c echo.Context) error {
 	var user models.User
 	// 今作ったuserに書き込むために&をつける
 	if err := db.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
+		log.Printf("Login failed: user not found for email: %s", req.Email)
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "user not found"})
 	}
 
 	// パスワード照合
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return c.JSON(http.StatusUnauthorized, "mismatch password")
+		log.Printf("Login failed: password mismatch for email: %s", req.Email)
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "パスワードが正しくありません"})
 	}
+
+	log.Printf("Login successful for user: %s (ID: %d)", user.Username, user.ID)
 
 	//JWTトークンを生成
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -67,7 +72,7 @@ func Login(c echo.Context) error {
 
 	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Could not generate token")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not generate token"})
 	}
 	return c.JSON(http.StatusOK, map[string]string{
 		"token": t,
