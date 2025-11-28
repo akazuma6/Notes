@@ -39,4 +39,7 @@ func Init() {
 	fmt.Println("Connected to database")
 	// 自動的にMySQL上にテーブルを作成
 	DB.AutoMigrate(&models.User{}, &models.Note{})
+
+	// 初期データを投入
+	Seed()
 }
