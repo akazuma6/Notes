@@ -5,5 +5,7 @@ export interface User {
 
 export interface Note {
   id: number;
-  username: string;
+  content: string;
+  created_at: string;
+  user: User;
 }
